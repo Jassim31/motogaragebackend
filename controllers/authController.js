@@ -3,6 +3,8 @@ import users from "../models/userModel.js"
 import bcrypt from 'bcryptjs'
 
 export const register = async (req,res)=>{
+    console.log("inside fn");
+    
     const {name, email, password} = req.body
 
 
@@ -29,7 +31,8 @@ try {
     res.status(201).send({
         _id:newUser._id,
         name:newUser.name,
-        email:newUser,email
+        email:newUser,email,
+        role: newUser.role,
     })
 }
     catch (error) {
@@ -40,9 +43,10 @@ try {
 
 //login controller logic//
 
-try{
 export const login =async (req,res)=>{
     const { email , password } = req.body;
+
+    try{
 
 const existingUser = await users.findOne({ email });
 if (!existingUser) {
@@ -58,6 +62,8 @@ if (isPasswordCorrect){
         _id:existingUser._id,
         name: existingUser.name,
         email: existingUser.email,
+        role: existingUser.role,
+
     });
 }
 else {
@@ -68,3 +74,28 @@ res.status(401).send({ message:"incorrect email or password"});
 }
 }
 
+// logout logic //
+
+export const logout = async(req,res)=>{
+    try {
+        res.cookie("jwt","",{
+            maxAge:0
+        })
+        res.status(200).send("Logged out successfully")
+    } catch (error) {
+        res.status(500).send({message:"internal server error"});
+        console.log(error);
+        
+    }
+}
+// check authorization
+
+export const checkAuth = async (req,res) => {
+    try{
+        res.status(200).send(req.user);
+    }
+    catch (error) {
+        res.status(500).send({message:"internal server error"});
+        console.log(error);
+    }
+}

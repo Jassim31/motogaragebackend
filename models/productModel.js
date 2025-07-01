@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const productShcema = mongoose.model({
+const productShcema = new mongoose.Schema({
     name:{
         type:String,
         required:true
