@@ -99,3 +99,37 @@ export const checkAuth = async (req,res) => {
         console.log(error);
     }
 }
+
+export const googleSignIn = async(req,res)=>{
+    const {email, name} = req.body
+    try {
+        if(!email || !name){
+            res.status(400).send({message:"All fields are required"})
+        }
+        let user = await users.findOne({email})
+
+        if(!user){
+            user = new users({
+                name,
+                email,
+                password:""
+            })
+        }
+       generateToken(user._id,res);
+
+        res.status(200).send({
+        _id:user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+
+    });
+
+
+
+    } catch (error) {
+                console.log(error);
+
+        res.status(500).send({message:"internal server error"});
+    }
+}
