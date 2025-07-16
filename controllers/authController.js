@@ -26,12 +26,13 @@ try {
         email,
         password:hashedPassword
     })
+     await newUser.save()
     generateToken(newUser._id,res)
-    newUser.save()
+   
     res.status(201).send({
         _id:newUser._id,
         name:newUser.name,
-        email:newUser,email,
+        email:newUser.email,
         role: newUser.role,
     })
 }
